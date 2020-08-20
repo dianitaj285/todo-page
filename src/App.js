@@ -1,26 +1,45 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
+import styled from "styled-components";
+import { Title } from "./components/Title";
+import TodoList from "./pages/TodoList";
+import AddTodos from "./pages/AddTodos";
+import { Nav } from "./components/Nav";
+import { connect } from "react-redux";
+import { getTodos } from "./redux/thunks";
 
-function App() {
+function App({ getTodos }) {
+  useEffect(() => {
+    getTodos();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Title />
+      <Container>
+        <Nav />
+        <Switch>
+          <Route path="/add" component={AddTodos} />
+          <Route path="/todos" component={TodoList} />
+          <Redirect to="/add" />
+        </Switch>
+      </Container>
+    </Router>
   );
 }
 
-export default App;
+const Container = styled.div`
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-evenly;
+`;
+
+const mapDispatchToProps = { getTodos };
+
+export default connect(null, mapDispatchToProps)(App);
